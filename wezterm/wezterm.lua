@@ -232,6 +232,11 @@ config.keys = {
         key = "-",
         mods = "CTRL",
         action = wezterm.action.DecreaseFontSize
+    },
+    {
+        key = "0",
+        mods = "CTRL",
+        action = wezterm.action.ResetFontSize
     }
 }
 
