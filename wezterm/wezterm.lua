@@ -73,7 +73,7 @@ wezterm.on("update-right-status", function(window, pane)
     end
 end)
 
-local SOLID_LEFT_ARROW = wezterm.nerdfonts.pl_lower_right_triangle
+local SOLID_LEFT_ARROW = wezterm.nerdfonts.ple_lower_right_triangle
 local SOLID_RIGHT_ARROW = wezterm.nerdfonts.ple_upper_left_triangle
 
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
@@ -88,6 +88,12 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 
     local edge_foreground = background 
     local title = tab.tab_title 
+
+    -- 追加: コピーモード等で自動的に設定されるタイトルが含まれる場合は無視する
+    if title and title:find("Copy mode") then
+        title = nil
+    end
+
     if not title or #title == 0 then
         title = "Ubuntu"
     end
