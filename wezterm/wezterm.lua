@@ -206,6 +206,20 @@ config.keys = {
         key = "[",
         mods = "LEADER",
         action = wezterm.action.ActivateCopyMode
+    },
+
+    -- コピー
+    {
+        key = "c",
+        mods = "CTRL",
+        action = wezterm.action.CopyTo("Clipboard")
+    },
+
+    -- ペースト
+    {
+        key = "v",
+        mods = "CTRL",
+        action = wezterm.action.PasteFrom("Clipboard")
     }
 }
 
