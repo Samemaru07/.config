@@ -333,6 +333,14 @@ config.keys = {
 }
 
 config.key_tables = {
+    resize_pane = {
+        { key = "h",      action = wezterm.action.AdjustPaneSize({ "Left", 1 }) },
+        { key = "l",      action = wezterm.action.AdjustPaneSize({ "Right", 1 }) },
+        { key = "k",      action = wezterm.action.AdjustPaneSize({ "Up", 1 }) },
+        { key = "j",      action = wezterm.action.AdjustPaneSize({ "Down", 1 }) },
+        { key = "Escape", action = "PopKeyTable" },
+    },
+
     pane_selection = {
         { key = "h",      action = wezterm.action.ActivatePaneDirection("Left") },
         { key = "j",      action = wezterm.action.ActivatePaneDirection("Down") },
