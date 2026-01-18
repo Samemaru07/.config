@@ -220,6 +220,18 @@ config.keys = {
         key = "v",
         mods = "CTRL",
         action = wezterm.action.PasteFrom("Clipboard")
+    },
+
+    -- フォントサイズ切り替え
+    {
+        key = ";",
+        mods = "CTRL",
+        action = wezterm.action.IncreaseFontSize
+    },
+    {
+        key = "-",
+        mods = "CTRL",
+        action = wezterm.action.DecreaseFontSize
     }
 }
 
