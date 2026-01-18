@@ -285,6 +285,13 @@ config.keys = {
         mods = "LEADER",
         action = wezterm.action.ActivateTab(-1)
     },
+
+    -- コマンドパレット
+    {
+        key = "p",
+        mods = "SHIFT|CTRL",
+        action = wezterm.action.ActivateCommandPalette
+    }
 }
 
 config.key_tables = {
