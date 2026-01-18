@@ -99,7 +99,13 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     end
     title = " " .. wezterm.truncate_right(title, max_width - 1) .. " "
 
+    local prefix = ""
+    if tab.tab_index == 0 then
+        prefix = "  "
+    end
+
     return {
+        { Text = prefix },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
         { Text = SOLID_LEFT_ARROW },
@@ -108,7 +114,8 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
         { Text = title},
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_RIGHT_ARROW }
+        { Text = SOLID_RIGHT_ARROW },
+        { Text = "  " }
     }
 end)
 
