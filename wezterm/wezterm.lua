@@ -56,6 +56,9 @@ wezterm.on("update-right-status", function(window, pane)
     elseif name == "copy_mode" then
         status = "  COPY  "
         bg_color = "#2d4fad"
+    elseif name == "pane_selection" then
+        status = " PANE SELECT "
+        bg_color = "#ad2d8f"
     elseif window:leader_is_active() then
         status = "   LEADER   "
         bg_color = "#ae8b2d"
@@ -99,24 +102,25 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
     end
     title = " " .. wezterm.truncate_right(title, max_width - 1) .. " "
 
-    local prefix = ""
+    local items = {}
+
     if tab.tab_index == 0 then
-        prefix = "  "
+        table.insert(items, { Background = { Color = "none" } })
+        table.insert(items, { Text = "   " })
     end
 
-    return {
-        { Text = prefix },
-        { Background = { Color = edge_background } },
-        { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_LEFT_ARROW },
-        { Background = { Color = background } },
-        { Foreground = { Color = foreground } },
-        { Text = title },
-        { Background = { Color = edge_background } },
-        { Foreground = { Color = edge_foreground } },
-        { Text = SOLID_RIGHT_ARROW },
-        { Text = "  " }
-    }
+    table.insert(items, { Background = { Color = edge_background } })
+    table.insert(items, { Foreground = { Color = edge_foreground } })
+    table.insert(items, { Text = SOLID_LEFT_ARROW })
+    table.insert(items, { Background = { Color = background } })
+    table.insert(items, { Foreground = { Color = foreground } })
+    table.insert(items, { Text = title })
+    table.insert(items, { Background = { Color = edge_background } })
+    table.insert(items, { Foreground = { Color = edge_foreground } })
+    table.insert(items, { Text = SOLID_RIGHT_ARROW })
+    table.insert(items, { Text = "  " })
+
+    return items
 end)
 
 config.default_cursor_style = "BlinkingBlock"
@@ -208,6 +212,16 @@ config.keys = {
         action = wezterm.action.ActivateCopyMode
     },
 
+    -- ペイン移動モード
+    {
+        key = "m",
+        mods = "LEADER",
+        action = wezterm.action.ActivateKeyTable({
+            name = "pane_selection",
+            one_shot = false
+        })
+    },
+
     -- コピー
     {
         key = "c",
@@ -295,56 +309,57 @@ config.keys = {
 }
 
 config.key_tables = {
-    resize_pane = {
-        { key = "LeftArrow",  action = wezterm.action.AdjustPaneSize({ "Left", 1 }) },
-        { key = "RightArrow", action = wezterm.action.AdjustPaneSize({ "Right", 1 }) },
-        { key = "DownArrow",  action = wezterm.action.AdjustPaneSize({ "Down", 1 }) },
-        { key = "UpArrow",    action = wezterm.action.AdjustPaneSize({ "Up", 1 }) },
-        { key = "Escape",     action = "PopKeyTable" }
+    pane_selection = {
+        { key = "h",      action = wezterm.action.ActivatePaneDirection("Left") },
+        { key = "j",      action = wezterm.action.ActivatePaneDirection("Down") },
+        { key = "k",      action = wezterm.action.ActivatePaneDirection("Up") },
+        { key = "l",      action = wezterm.action.ActivatePaneDirection("Right") },
+        { key = "Escape", action = "PopKeyTable" },
     },
+
     copy_mode = {
         -- 移動
-        { key = "h", mods = "NONE", action = wezterm.action.CopyMode("MoveLeft") },
-        { key = "j", mods = "NONE", action = wezterm.action.CopyMode("MoveDown") },
-        { key = "k", mods = "NONE", action = wezterm.action.CopyMode("MoveUp") },
-        { key = "l", mods = "NONE", action = wezterm.action.CopyMode("MoveRight") },
+        { key = "h", mods = "NONE",  action = wezterm.action.CopyMode("MoveLeft") },
+        { key = "j", mods = "NONE",  action = wezterm.action.CopyMode("MoveDown") },
+        { key = "k", mods = "NONE",  action = wezterm.action.CopyMode("MoveUp") },
+        { key = "l", mods = "NONE",  action = wezterm.action.CopyMode("MoveRight") },
         -- 最初と最後に移動
-        { key = "^", mods = "NONE", action = wezterm.action.CopyMode("MoveToStartOfLineContent") },
+        { key = "^", mods = "NONE",  action = wezterm.action.CopyMode("MoveToStartOfLineContent") },
         { key = "$", mods = "SHIFT", action = wezterm.action.CopyMode("MoveToEndOfLineContent") },
         -- 左端に移動
-        { key = "0", mods = "NONE", action = wezterm.action.CopyMode("MoveToStartOfLine") },
-        { key = "o", mods = "NONE", action = wezterm.action.CopyMode("MoveToSelectionOtherEnd") },
-        { key = "O", mods = "NONE", action = wezterm.action.CopyMode("MoveToSelectionOtherEndHoriz") },
+        { key = "0", mods = "NONE",  action = wezterm.action.CopyMode("MoveToStartOfLine") },
+        { key = "o", mods = "NONE",  action = wezterm.action.CopyMode("MoveToSelectionOtherEnd") },
+        { key = "O", mods = "NONE",  action = wezterm.action.CopyMode("MoveToSelectionOtherEndHoriz") },
         --
-        { key = ";", mods = "NONE", action = wezterm.action.CopyMode("JumpAgain") },
+        { key = ";", mods = "NONE",  action = wezterm.action.CopyMode("JumpAgain") },
         -- 単語ごと移動
-        { key = "w", mods = "NONE", action = wezterm.action.CopyMode("MoveForwardWord") },
-        { key = "b", mods = "NONE", action = wezterm.action.CopyMode("MoveBackwardWord") },
-        { key = "e", mods = "NONE", action = wezterm.action.CopyMode("MoveForwardWordEnd") },
+        { key = "w", mods = "NONE",  action = wezterm.action.CopyMode("MoveForwardWord") },
+        { key = "b", mods = "NONE",  action = wezterm.action.CopyMode("MoveBackwardWord") },
+        { key = "e", mods = "NONE",  action = wezterm.action.CopyMode("MoveForwardWordEnd") },
         -- ジャンプ機能 t f
-        { key = "t", mods = "NONE", action = wezterm.action.CopyMode({ JumpForward = { prev_char = true } }) },
-        { key = "f", mods = "NONE", action = wezterm.action.CopyMode({ JumpForward = { prev_char = false } }) },
-        { key = "T", mods = "NONE", action = wezterm.action.CopyMode({ JumpBackward = { prev_char = true } }) },
-        { key = "F", mods = "NONE", action = wezterm.action.CopyMode({ JumpBackward = { prev_char = false } }) },
+        { key = "t", mods = "NONE",  action = wezterm.action.CopyMode({ JumpForward = { prev_char = true } }) },
+        { key = "f", mods = "NONE",  action = wezterm.action.CopyMode({ JumpForward = { prev_char = false } }) },
+        { key = "T", mods = "NONE",  action = wezterm.action.CopyMode({ JumpBackward = { prev_char = true } }) },
+        { key = "F", mods = "NONE",  action = wezterm.action.CopyMode({ JumpBackward = { prev_char = false } }) },
         -- 一番下へ
-        { key = "G", mods = "NONE", action = wezterm.action.CopyMode("MoveToScrollbackBottom") },
+        { key = "G", mods = "NONE",  action = wezterm.action.CopyMode("MoveToScrollbackBottom") },
         -- 一番上へ
-        { key = "g", mods = "NONE", action = wezterm.action.CopyMode("MoveToScrollbackTop") },
+        { key = "g", mods = "NONE",  action = wezterm.action.CopyMode("MoveToScrollbackTop") },
         -- viweport
-        { key = "H", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportTop") },
-        { key = "L", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportBottom") },
-        { key = "M", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportMiddle") },
+        { key = "H", mods = "NONE",  action = wezterm.action.CopyMode("MoveToViewportTop") },
+        { key = "L", mods = "NONE",  action = wezterm.action.CopyMode("MoveToViewportBottom") },
+        { key = "M", mods = "NONE",  action = wezterm.action.CopyMode("MoveToViewportMiddle") },
         -- スクロール
-        { key = "b", mods = "CTRL", action = wezterm.action.CopyMode("PageUp") },
-        { key = "f", mods = "CTRL", action = wezterm.action.CopyMode("PageDown") },
-        { key = "d", mods = "CTRL", action = wezterm.action.CopyMode({ MoveByPage = 0.5 }) },
-        { key = "u", mods = "CTRL", action = wezterm.action.CopyMode({ MoveByPage = -0.5 }) },
+        { key = "b", mods = "CTRL",  action = wezterm.action.CopyMode("PageUp") },
+        { key = "f", mods = "CTRL",  action = wezterm.action.CopyMode("PageDown") },
+        { key = "d", mods = "CTRL",  action = wezterm.action.CopyMode({ MoveByPage = 0.5 }) },
+        { key = "u", mods = "CTRL",  action = wezterm.action.CopyMode({ MoveByPage = -0.5 }) },
         -- 範囲選択モード
-        { key = "v", mods = "NONE", action = wezterm.action.CopyMode({ SetSelectionMode = "Cell" }) },
-        { key = "v", mods = "CTRL", action = wezterm.action.CopyMode({ SetSelectionMode = "Block" }) },
-        { key = "V", mods = "NONE", action = wezterm.action.CopyMode({ SetSelectionMode = "Line" }) },
+        { key = "v", mods = "NONE",  action = wezterm.action.CopyMode({ SetSelectionMode = "Cell" }) },
+        { key = "v", mods = "CTRL",  action = wezterm.action.CopyMode({ SetSelectionMode = "Block" }) },
+        { key = "V", mods = "NONE",  action = wezterm.action.CopyMode({ SetSelectionMode = "Line" }) },
         -- コピー
-        { key = "y", mods = "NONE", action = wezterm.action.CopyTo("Clipboard") },
+        { key = "y", mods = "NONE",  action = wezterm.action.CopyTo("Clipboard") },
 
         -- コピーモードを終了
         {
