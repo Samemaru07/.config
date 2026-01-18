@@ -303,8 +303,20 @@ config.keys = {
     -- コマンドパレット
     {
         key = "p",
-        mods = "SHIFT|CTRL",
+        mods = "LEADER",
         action = wezterm.action.ActivateCommandPalette
+    },
+
+    -- PowerShellを新しいタブで開く
+    {
+        key = "p",
+        mods = "CTRL|SHIFT",
+        action = wezterm.action_callback(function(window, pane)
+            local new_tab, new_pane, new_window = window:mux_window():spawn_tab({
+                args = { "powershell.exe" },
+            })
+            new_tab:set_title("PowerShell")
+        end),
     }
 }
 
