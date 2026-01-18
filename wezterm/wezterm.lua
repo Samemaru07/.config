@@ -11,7 +11,7 @@ config.automatically_reload_config = true
 -- 基本設定
 config.font = wezterm.font("0xProto Nerd Font")
 config.font_size = 11.0
-config.default_prog = {"wsl.exe", "-d", "Ubuntu", "--cd", "~"}
+config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
 config.color_scheme = "AdventureTime"
 
 
@@ -86,8 +86,8 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
         foreground = "#FFFFFF"
     end
 
-    local edge_foreground = background 
-    local title = tab.tab_title 
+    local edge_foreground = background
+    local title = tab.tab_title
 
     -- 追加: コピーモード等で自動的に設定されるタイトルが含まれる場合は無視する
     if title and title:find("Copy mode") then
@@ -110,8 +110,8 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
         { Foreground = { Color = edge_foreground } },
         { Text = SOLID_LEFT_ARROW },
         { Background = { Color = background } },
-        { Foreground = { Color = foreground} },
-        { Text = title},
+        { Foreground = { Color = foreground } },
+        { Text = title },
         { Background = { Color = edge_background } },
         { Foreground = { Color = edge_foreground } },
         { Text = SOLID_RIGHT_ARROW },
@@ -186,7 +186,7 @@ config.keys = {
         mods = "LEADER",
         action = wezterm.action.PromptInputLine({
             description = "新しいタブ名を入力してください",
-            action = wezterm.action_callback(function (window, pane, line)
+            action = wezterm.action_callback(function(window, pane, line)
                 if line then
                     window:active_tab():set_title(line)
                 end
@@ -296,13 +296,66 @@ config.keys = {
 
 config.key_tables = {
     resize_pane = {
-        { key = "LeftArrow", action = wezterm.action.AdjustPaneSize({ "Left", 1 }) },
-        { key = "RightArrow", action = wezterm.action.AdjustPaneSize({"Right", 1}) },
-        { key = "DownArrow", action = wezterm.action.AdjustPaneSize({"Down", 1}) },
-        { key = "UpArrow", action = wezterm.action.AdjustPaneSize({ "Up", 1 }) },
-        { key = "Escape", action = "PopKeyTable" }
-    }
-    -- copy_mode はデフォルトを使用するため削除
+        { key = "LeftArrow",  action = wezterm.action.AdjustPaneSize({ "Left", 1 }) },
+        { key = "RightArrow", action = wezterm.action.AdjustPaneSize({ "Right", 1 }) },
+        { key = "DownArrow",  action = wezterm.action.AdjustPaneSize({ "Down", 1 }) },
+        { key = "UpArrow",    action = wezterm.action.AdjustPaneSize({ "Up", 1 }) },
+        { key = "Escape",     action = "PopKeyTable" }
+    },
+    copy_mode = {
+        -- 移動
+        { key = "h", mods = "NONE", action = wezterm.action.CopyMode("MoveLeft") },
+        { key = "j", mods = "NONE", action = wezterm.action.CopyMode("MoveDown") },
+        { key = "k", mods = "NONE", action = wezterm.action.CopyMode("MoveUp") },
+        { key = "l", mods = "NONE", action = wezterm.action.CopyMode("MoveRight") },
+        -- 最初と最後に移動
+        { key = "^", mods = "NONE", action = wezterm.action.CopyMode("MoveToStartOfLineContent") },
+        { key = "$", mods = "SHIFT", action = wezterm.action.CopyMode("MoveToEndOfLineContent") },
+        -- 左端に移動
+        { key = "0", mods = "NONE", action = wezterm.action.CopyMode("MoveToStartOfLine") },
+        { key = "o", mods = "NONE", action = wezterm.action.CopyMode("MoveToSelectionOtherEnd") },
+        { key = "O", mods = "NONE", action = wezterm.action.CopyMode("MoveToSelectionOtherEndHoriz") },
+        --
+        { key = ";", mods = "NONE", action = wezterm.action.CopyMode("JumpAgain") },
+        -- 単語ごと移動
+        { key = "w", mods = "NONE", action = wezterm.action.CopyMode("MoveForwardWord") },
+        { key = "b", mods = "NONE", action = wezterm.action.CopyMode("MoveBackwardWord") },
+        { key = "e", mods = "NONE", action = wezterm.action.CopyMode("MoveForwardWordEnd") },
+        -- ジャンプ機能 t f
+        { key = "t", mods = "NONE", action = wezterm.action.CopyMode({ JumpForward = { prev_char = true } }) },
+        { key = "f", mods = "NONE", action = wezterm.action.CopyMode({ JumpForward = { prev_char = false } }) },
+        { key = "T", mods = "NONE", action = wezterm.action.CopyMode({ JumpBackward = { prev_char = true } }) },
+        { key = "F", mods = "NONE", action = wezterm.action.CopyMode({ JumpBackward = { prev_char = false } }) },
+        -- 一番下へ
+        { key = "G", mods = "NONE", action = wezterm.action.CopyMode("MoveToScrollbackBottom") },
+        -- 一番上へ
+        { key = "g", mods = "NONE", action = wezterm.action.CopyMode("MoveToScrollbackTop") },
+        -- viweport
+        { key = "H", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportTop") },
+        { key = "L", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportBottom") },
+        { key = "M", mods = "NONE", action = wezterm.action.CopyMode("MoveToViewportMiddle") },
+        -- スクロール
+        { key = "b", mods = "CTRL", action = wezterm.action.CopyMode("PageUp") },
+        { key = "f", mods = "CTRL", action = wezterm.action.CopyMode("PageDown") },
+        { key = "d", mods = "CTRL", action = wezterm.action.CopyMode({ MoveByPage = 0.5 }) },
+        { key = "u", mods = "CTRL", action = wezterm.action.CopyMode({ MoveByPage = -0.5 }) },
+        -- 範囲選択モード
+        { key = "v", mods = "NONE", action = wezterm.action.CopyMode({ SetSelectionMode = "Cell" }) },
+        { key = "v", mods = "CTRL", action = wezterm.action.CopyMode({ SetSelectionMode = "Block" }) },
+        { key = "V", mods = "NONE", action = wezterm.action.CopyMode({ SetSelectionMode = "Line" }) },
+        -- コピー
+        { key = "y", mods = "NONE", action = wezterm.action.CopyTo("Clipboard") },
+
+        -- コピーモードを終了
+        {
+            key = "Enter",
+            mods = "NONE",
+            action = wezterm.action.Multiple({ { CopyTo = "ClipboardAndPrimarySelection" }, { CopyMode = "Close" } }),
+        },
+        { key = "Escape", mods = "NONE", action = wezterm.action.CopyMode("Close") },
+        { key = "c",      mods = "CTRL", action = wezterm.action.CopyMode("Close") },
+        { key = "q",      mods = "NONE", action = wezterm.action.CopyMode("Close") },
+    },
 }
 
 return config
