@@ -299,6 +299,18 @@ config.keys = {
         mods = "LEADER",
         action = wezterm.action.ActivateTab(-1)
     },
+    -- 右のタブへ移動
+    {
+        key = "RightArrow",
+        mods = "LEADER",
+        action = wezterm.action.ActivateTabRelative(1)
+    },
+    -- 左のタブへ移動
+    {
+        key = "LeftArrow",
+        mods = "LEADER",
+        action = wezterm.action.ActivateTabRelative(-1)
+    },
 
     -- コマンドパレット
     {
