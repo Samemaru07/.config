@@ -329,6 +329,7 @@ config.key_tables = {
 		{ key = "k", action = wezterm.action.AdjustPaneSize({ "Up", 1 }) },
 		{ key = "j", action = wezterm.action.AdjustPaneSize({ "Down", 1 }) },
 		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "Enter", action = "PopKeyTable" },
 	},
 
 	pane_selection = {
@@ -337,6 +338,7 @@ config.key_tables = {
 		{ key = "k", action = wezterm.action.ActivatePaneDirection("Up") },
 		{ key = "l", action = wezterm.action.ActivatePaneDirection("Right") },
 		{ key = "Escape", action = "PopKeyTable" },
+		{ key = "Enter", action = "PopKeyTable" },
 	},
 
 	copy_mode = {
