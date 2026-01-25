@@ -6,6 +6,7 @@ Dotfilesでまとめるか悩んだ。
 - Terminal: WezTerm
 - Shell: Zsh
 - Editor: Neovim
+    - [NeovimのConfig](https://github.com/Samemaru07/Neovim-setup_WSL2.git)
 
 ## 差異
 ### WezTerm
@@ -16,7 +17,7 @@ Dotfilesでまとめるか悩んだ。
 config.background = {
     {
         source = {
-            File = "C:\\Users\\nakayama\\Pictures\\壁紙\\ターミナル\\第六駆逐隊_ターミナル2.png"
+            File = "C:\\Users\\...\\Pictures\\壁紙\\ターミナル\\第六駆逐隊_ターミナル2.png"
         },
         ...
     }
@@ -35,3 +36,6 @@ config.background = {
     }
 }
 ```
+
+## 参考サイト
+- [mozumasuさん, "モテるターミナルにカスタマイズしよう (wezterm)", Zenn](https://zenn.dev/mozumasu/articles/mozumasu-wezterm-customization)
