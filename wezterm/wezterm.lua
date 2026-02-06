@@ -8,12 +8,17 @@ end
 config.automatically_reload_config = true
 
 -- 基本設定
-config.font = wezterm.font("0xProto Nerd Font")
 config.font_size = 11.0
 config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
 config.color_scheme = "AdventureTime"
 config.initial_cols = 160
 config.initial_rows = 45
+config.freetype_load_flags = "NO_HINTING"
+config.freetype_load_target = "HorizontalLcd"
+config.freetype_render_target = "HorizontalLcd"
+config.front_end = "WebGpu"
+config.text_background_opacity = 1.0
+config.font = wezterm.font("0xProto Nerd Font", { weight = "Medium" })
 
 -- 背景設定
 config.background = {
