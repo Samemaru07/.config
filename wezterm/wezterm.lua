@@ -19,9 +19,9 @@ config.initial_rows = 45
 config.background = {
 	{
 		source = {
-			File = "C:\\Users\\TUFGamingB550Plus\\Pictures\\壁紙\\ターミナル\\第六駆逐隊_ターミナル2.jpg",
+			File = "C:\\Users\\TUFGamingB550Plus\\Pictures\\壁紙\\ターミナル\\ハーラちゃん.png",
 		},
-		hsb = { brightness = 0.8 },
+		hsb = { brightness = 0.15 },
 		attachment = "Fixed",
 	},
 }
