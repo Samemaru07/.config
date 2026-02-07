@@ -26,7 +26,7 @@ config.background = {
 		source = {
 			File = "C:\\Users\\TUFGamingB550Plus\\Pictures\\壁紙\\ターミナル\\ハーラちゃん.png",
 		},
-		hsb = { brightness = 0.15 },
+		hsb = { brightness = 0.2 },
 		attachment = "Fixed",
 	},
 }
