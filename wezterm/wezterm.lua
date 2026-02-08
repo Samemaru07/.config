@@ -8,17 +8,19 @@ end
 config.automatically_reload_config = true
 
 -- 基本設定
-config.font_size = 11.0
+config.font_size = 10.5
 config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
 config.color_scheme = "AdventureTime"
 config.initial_cols = 160
 config.initial_rows = 45
-config.freetype_load_flags = "NO_HINTING"
-config.freetype_load_target = "HorizontalLcd"
-config.freetype_render_target = "HorizontalLcd"
+config.freetype_load_flags = "DEFAULT"
+config.freetype_load_target = "Normal"
+config.freetype_render_target = "Normal"
 config.front_end = "WebGpu"
-config.text_background_opacity = 1.0
-config.font = wezterm.font("0xProto Nerd Font", { weight = "Medium" })
+config.text_background_opacity = 0.92
+config.window_background_opacity = 0.92
+config.font = wezterm.font("JetBrains Mono", { weight = "Regular" })
+config.line_height = 0.98
 
 -- 背景設定
 config.background = {
@@ -26,8 +28,13 @@ config.background = {
 		source = {
 			File = "C:\\Users\\TUFGamingB550Plus\\Pictures\\壁紙\\ターミナル\\ハーラちゃん.png",
 		},
-		hsb = { brightness = 0.2 },
+		hsb = { brightness = 0.18, saturation = 0.9 },
 		attachment = "Fixed",
+	},
+	{
+		source = { Color = "rgba(0,0,0,0.25)" },
+		width = "100%",
+		height = "100%",
 	},
 }
 
@@ -38,8 +45,8 @@ config.use_fancy_tab_bar = false
 config.hide_tab_bar_if_only_one_tab = false
 config.show_new_tab_button_in_tab_bar = false
 config.inactive_pane_hsb = {
-	saturation = 0.8,
-	brightness = 0.4,
+	saturation = 0.85,
+	brightness = 0.5,
 }
 config.colors = {
 	tab_bar = {
