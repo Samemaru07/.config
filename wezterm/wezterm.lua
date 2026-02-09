@@ -196,14 +196,30 @@ config.keys = {
 	{
 		key = "%",
 		mods = "LEADER|SHIFT",
-		action = wezterm.action.SplitHorizontal({ domain = "CurrentPaneDomain" }),
+		action = wezterm.action_callback(function(window, pane)
+			local cwd = pane:get_current_working_dir()
+			local args = { "wsl.exe", "-d", "Ubuntu" }
+			if cwd then
+				table.insert(args, "--cd")
+				table.insert(args, cwd.file_path)
+			end
+			pane:split({ direction = "Right", args = args })
+		end),
 	},
 
 	-- 横分割(上下に2枚)
 	{
 		key = '"', -- 修正: '""' から '"' へ変更
 		mods = "LEADER|SHIFT",
-		action = wezterm.action.SplitVertical({ domain = "CurrentPaneDomain" }),
+		action = wezterm.action_callback(function(window, pane)
+			local cwd = pane:get_current_working_dir()
+			local args = { "wsl.exe", "-d", "Ubuntu" }
+			if cwd then
+				table.insert(args, "--cd")
+				table.insert(args, cwd.file_path)
+			end
+			pane:split({ direction = "Bottom", args = args })
+		end),
 	},
 
 	-- ペイン移動
