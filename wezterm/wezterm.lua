@@ -10,7 +10,6 @@ config.automatically_reload_config = true
 -- 基本設定
 config.font_size = 10.5
 config.default_prog = { "wsl.exe", "-d", "Ubuntu", "--cd", "~" }
-config.color_scheme = "AdventureTime"
 config.initial_cols = 160
 config.initial_rows = 45
 config.freetype_load_flags = "DEFAULT"
@@ -48,9 +47,62 @@ config.inactive_pane_hsb = {
 	saturation = 0.85,
 	brightness = 0.5,
 }
+
 config.colors = {
+	foreground = "#F0E4D6",
+	background = "#181614",
+
+	cursor_bg = "#4A7BD1",
+	cursor_fg = "#181614",
+	cursor_border = "#4A7BD1",
+
+	selection_bg = "#3A332E",
+	selection_fg = "#F0E4D6",
+
+	ansi = {
+		"#181614",
+		"#C4746E",
+		"#8DAA7F",
+		"#D0B27A",
+		"#4A7BD1",
+		"#A58CC4",
+		"#7FAFA9",
+		"#E6D8C9",
+	},
+
+	brights = {
+		"#9E9E9E",
+		"#E08A84",
+		"#A7C29A",
+		"#E5C98F",
+		"#6C9BFF",
+		"#C2A6E0",
+		"#9ED0C9",
+		"#FFF3E6",
+	},
+
 	tab_bar = {
-		background = "rgba(0, 0, 0, 0)",
+		background = "rgba(0,0,0,0)",
+
+		active_tab = {
+			bg_color = "#ae8b2d",
+			fg_color = "#FFFFFF",
+		},
+
+		inactive_tab = {
+			bg_color = "rgba(0,0,0,0)",
+			fg_color = "#CBBBAA",
+		},
+
+		inactive_tab_hover = {
+			bg_color = "rgba(0,0,0,0)",
+			fg_color = "#F0E4D6",
+		},
+
+		new_tab = {
+			bg_color = "rgba(0,0,0,0)",
+			fg_color = "#CBBBAA",
+		},
 	},
 }
 
