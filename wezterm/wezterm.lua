@@ -191,17 +191,58 @@ config.cursor_blink_rate = 500
 -- Leader設定 Ctrl + q (待機時間 2000ms)
 config.leader = { key = "q", mods = "CTRL", timeout_milliseconds = 2000 }
 
+-- Helper to process CWD for WSL
+local function get_cwd_path(pane)
+	local cwd = pane:get_current_working_dir()
+	if cwd then
+		local path = cwd.file_path
+
+		-- 1. Remove file:// prefix
+		if path:sub(1, 7) == "file://" then
+			path = path:sub(8)
+		end
+
+		-- 2. Normalize backslashes to forward slashes (fix for Windows paths)
+		path = path:gsub("\\", "/")
+
+		-- 3. Remove leading slash for /C:/ format
+		if path:match("^/[A-Za-z]:/") then
+			path = path:sub(2)
+		end
+
+		-- 4. Convert drive letter C:/... to /mnt/c/...
+		local drive, rest = path:match("^([A-Za-z]):/(.*)")
+		if drive then
+			path = "/mnt/" .. drive:lower() .. "/" .. rest
+		end
+
+		-- 5. Map TUFGamingB550Plus to ~/win (using absolute path for safety)
+		local win_mnt = "/mnt/c/Users/TUFGamingB550Plus"
+		-- Check ignoring case for robust path matching
+		if path:lower():sub(1, #win_mnt) == win_mnt:lower() then
+			local suffix = path:sub(#win_mnt + 1)
+			-- Ensure we match the directory exactly or as a parent
+			if suffix == "" or suffix:sub(1, 1) == "/" then
+				path = "/home/samemaru/win" .. suffix
+			end
+		end
+
+		return path
+	end
+	return nil
+end
+
 config.keys = {
 	-- 縦分割(左右に2枚)
 	{
 		key = "%",
 		mods = "LEADER|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
-			local cwd = pane:get_current_working_dir()
 			local args = { "wsl.exe", "-d", "Ubuntu" }
+			local cwd = get_cwd_path(pane)
 			if cwd then
-				table.insert(args, "--cd")
-				table.insert(args, cwd.file_path)
+				-- CD inside the shell to avoid path conversion issues
+				args = { "wsl.exe", "-d", "Ubuntu", "-e", "bash", "-c", "cd '" .. cwd .. "'; exec zsh" }
 			end
 			pane:split({ direction = "Right", args = args })
 		end),
@@ -212,11 +253,11 @@ config.keys = {
 		key = '"', -- 修正: '""' から '"' へ変更
 		mods = "LEADER|SHIFT",
 		action = wezterm.action_callback(function(window, pane)
-			local cwd = pane:get_current_working_dir()
 			local args = { "wsl.exe", "-d", "Ubuntu" }
+			local cwd = get_cwd_path(pane)
 			if cwd then
-				table.insert(args, "--cd")
-				table.insert(args, cwd.file_path)
+				-- CD inside the shell to avoid path conversion issues
+				args = { "wsl.exe", "-d", "Ubuntu", "-e", "bash", "-c", "cd '" .. cwd .. "'; exec zsh" }
 			end
 			pane:split({ direction = "Bottom", args = args })
 		end),
@@ -387,6 +428,49 @@ config.keys = {
 		key = "p",
 		mods = "LEADER",
 		action = wezterm.action.ActivateCommandPalette,
+	},
+
+	-- lazygitを新しいウィンドウで開く
+	{
+		key = "g",
+		mods = "LEADER",
+		action = wezterm.action_callback(function(window, pane)
+			local args = { "wsl.exe", "-d", "Ubuntu" }
+			local cwd = get_cwd_path(pane)
+			
+			-- デバッグ用: 生のパスを取得
+			local raw_cwd_obj = pane:get_current_working_dir()
+			local raw_path = "nil"
+			if raw_cwd_obj then
+				raw_path = raw_cwd_obj.file_path
+			end
+
+			local cmd = "lazygit"
+			-- デバッグコマンドの構築
+			-- 1. WezTermが受け取っている生のパスを表示
+			-- 2. 変換後のパスを表示
+			-- 3. cd 実行
+			-- 4. 実際のカレントディレクトリを表示
+			-- 5. .gitの存在確認
+			cmd = "echo '=== WezTerm Debug Info ==='; "
+				.. "echo 'Raw Path (from pane): " .. raw_path .. "'; "
+				.. "echo 'Converted Path:       " .. (cwd or "nil") .. "'; "
+				.. (cwd and ("cd '" .. cwd .. "' && ") or "")
+				.. "echo 'Final PWD:            ' $PWD; "
+				.. "if [ -d .git ]; then echo 'Status: .git found'; else echo 'Status: No .git found'; fi; "
+				.. "echo '=========================='; "
+				.. "lazygit || read"
+
+			-- Use bash to cd then run lazygit
+			args = { "wsl.exe", "-d", "Ubuntu", "-e", "bash", "-c", cmd }
+
+			window:perform_action(
+				wezterm.action.SpawnCommandInNewWindow({
+					args = args,
+				}),
+				pane
+			)
+		end),
 	},
 
 	-- PowerShellを新しいタブで開く
